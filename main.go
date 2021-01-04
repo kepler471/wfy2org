@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/xml"
 	"fmt"
+	"io/ioutil"
 	"os"
 )
 
@@ -32,16 +33,23 @@ type Outline struct {
 //type Completion struct {
 //}
 
-func main() {
+func parse() OPML {
 	// TODO: Handle close error
 	xmlFile, err := os.Open("workflowy-export.opml")
-
 	if err != nil {
 		fmt.Println(err)
 	}
-
-	fmt.Println("Successful read")
-
+	byteValue, _ := ioutil.ReadAll(xmlFile)
+	org := OPML{}
+	_ = xml.Unmarshal(byteValue, &org)
 	// TODO: Handle close error
 	_ = xmlFile.Close()
+	return org
+}
+
+func main() {
+	o := parse()
+	fmt.Printf("XMLName: %v\n", o.XMLName)
+	fmt.Printf("Head: %v\n", o.Head)
+	fmt.Printf("Body?: %v\n", o.Body)
 }
