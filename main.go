@@ -22,16 +22,12 @@ type Body struct {
 }
 
 type Outline struct {
-	XMLName  xml.Name `xml:"outline"`
-	Text     string   `xml:"text"`
-	Note     string   `xml:"_note"`
-	Complete string   `xml:"_complete"`
+	XMLName  xml.Name  `xml:"outline"`
+	Text     string    `xml:"text,attr"`
+	Note     string    `xml:"_note,attr"`
+	Complete string    `xml:"_complete,attr"`
+	Body     []Outline `xml:"outline"`
 }
-
-//type Note struct {
-//}
-//type Completion struct {
-//}
 
 func parse() OPML {
 	// TODO: Handle close error
@@ -49,7 +45,13 @@ func parse() OPML {
 
 func main() {
 	o := parse()
+
+	// Tests
+	// TODO: Move these to proper tests
 	fmt.Printf("XMLName: %v\n", o.XMLName)
 	fmt.Printf("Head: %v\n", o.Head)
-	fmt.Printf("Body?: %v\n", o.Body)
+	//fmt.Printf("Body?: %v\n", o.Body)
+	fmt.Printf("First note: %v\n", o.Body.Body[13].Body[1].Body)
+	fmt.Printf("First note: %v\n", o.Body.Body[1].Note)
+	fmt.Printf("First note: %v\n", o.Body.Body[13])
 }
