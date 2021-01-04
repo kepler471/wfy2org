@@ -1,1 +1,3 @@
-module "wfy2org"
+module wfy2org
+
+go 1.15
