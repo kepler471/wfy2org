@@ -1,3 +1,7 @@
+// wfy2go converts OPML structured document to an Emacs Org file.
+// Currently the Org file output is just printed
+// TODO: Add command line flags
+// TODO: Add file write
 package main
 
 import (
@@ -5,20 +9,13 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 )
 
 type OPML struct {
-	XMLName xml.Name `xml:"opml"`
-	Head    Head     `xml:"head"`
-	Body    Body     `xml:"body"`
-}
-
-type Head struct {
-	Email string `xml:"ownerEmail"`
-}
-
-type Body struct {
-	Body []Outline `xml:"outline"`
+	XMLName xml.Name  `xml:"opml"`
+	Head    string    `xml:"head>ownerEmail"`
+	Body    []Outline `xml:"body>outline"`
 }
 
 type Outline struct {
@@ -26,12 +23,11 @@ type Outline struct {
 	Text     string    `xml:"text,attr"`
 	Note     string    `xml:"_note,attr"`
 	Complete string    `xml:"_complete,attr"`
-	Body     []Outline `xml:"outline"`
+	Children []Outline `xml:"outline"`
 }
 
-func parse() OPML {
-	// TODO: Handle close error
-	xmlFile, err := os.Open("workflowy-export.opml")
+func ParseOPML(file string) OPML {
+	xmlFile, err := os.Open(file)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -43,15 +39,37 @@ func parse() OPML {
 	return org
 }
 
-func main() {
-	o := parse()
+func OPMLToTree(o OPML) []Outline {
+	return o.Body
+}
 
-	// Tests
-	// TODO: Move these to proper tests
-	fmt.Printf("XMLName: %v\n", o.XMLName)
-	fmt.Printf("Head: %v\n", o.Head)
-	//fmt.Printf("Body?: %v\n", o.Body)
-	fmt.Printf("First note: %v\n", o.Body.Body[13].Body[1].Body)
-	fmt.Printf("First note: %v\n", o.Body.Body[1].Note)
-	fmt.Printf("First note: %v\n", o.Body.Body[13])
+// TreeToFile create a linear data structure from the tree
+func TreeToFile(t []Outline, depth int) {
+	if len(t) == 0 {
+		return
+	}
+	for _, item := range t {
+		TodoTag := ""
+		if item.Complete != "" {
+			TodoTag = "DONE "
+		}
+		fmt.Printf("%v %v %v\n", strings.Repeat("*", depth), TodoTag, OrgMarkup(item.Text))
+		if item.Note != "" {
+			fmt.Println(OrgMarkup(item.Note))
+		}
+		TreeToFile(item.Children, depth+1)
+	}
+}
+
+func OrgMarkup(text string) string {
+	// TODO: 	Links
+	// TODO:	Dates
+	// TODO:	Emphasis
+	return text
+}
+
+func main() {
+	o := ParseOPML("workflowy-export.opml")
+	t := OPMLToTree(o)
+	TreeToFile(t, 1)
 }
