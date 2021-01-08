@@ -62,10 +62,17 @@ func TreeToFile(t []Outline, depth int) {
 }
 
 func OrgMarkup(text string) string {
+	r := strings.NewReplacer(
+		"<b>", "*",
+		"</b>", "*",
+		"<i>", "/",
+		"</i>", "/",
+		"<u>", "_",
+		"</u>", "_",
+	)
 	// TODO: 	Links
 	// TODO:	Dates
-	// TODO:	Emphasis
-	return text
+	return r.Replace(text)
 }
 
 func main() {
