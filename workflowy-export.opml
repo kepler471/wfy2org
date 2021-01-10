@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<opml version="2.0">
+  <head>
+    <ownerEmail>
+      steliosdg@gmail.com
+    </ownerEmail>
+  </head>
+  <body>
+    <outline text="Testing wfy2org">
+      <outline text="Tested &lt;time startYear=&quot;2021&quot; startMonth=&quot;1&quot; startDay=&quot;10&quot; startHour=&quot;15&quot; startMinute=&quot;30&quot;&gt;Sun, Jan 10, 2021 at 3:30pm&lt;/time&gt; " />
+      <outline text="&lt;b&gt;&lt;i&gt;&lt;u&gt;testing&lt;/u&gt;&lt;/i&gt;&lt;/b&gt; &lt;b&gt;all&lt;/b&gt; &lt;u&gt;the&lt;/u&gt; &lt;i&gt;emphasis&lt;/i&gt;">
+        <outline text="&lt;u&gt;underline&lt;/u&gt;">
+          <outline text="&lt;b&gt;bold&lt;/b&gt;" />
+        </outline>
+      </outline>
+      <outline text="&lt;time startYear=&quot;2021&quot; endYear=&quot;2023&quot; startMonth=&quot;1&quot; endMonth=&quot;1&quot; startDay=&quot;31&quot; endDay=&quot;10&quot; startHour=&quot;13&quot; endHour=&quot;13&quot;&gt;Sun, Jan 31, 2021 at 1:00pm to Tue, Jan 10, 2023 at 1:00pm&lt;/time&gt;   " />
+      <outline text="from &lt;time startYear=&quot;2021&quot; endYear=&quot;2021&quot; startMonth=&quot;1&quot; endMonth=&quot;1&quot; startDay=&quot;15&quot; endDay=&quot;16&quot;&gt;Fri, Jan 15, 2021 to Sat, Jan 16, 2021&lt;/time&gt; ">
+        <outline text="&lt;a href=&quot;https://orgmode.org/&quot;&gt;Fri, Jan 15, 2021 &lt;/a&gt;" />
+      </outline>
+      <outline text="&lt;i&gt;&lt;a href=&quot;https://golang.org/pkg/regexp/&quot;&gt;Regex info&lt;/a&gt;&lt;/i&gt;">
+        <outline text="How" _note="&lt;i&gt;&lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;https://news.ycombinator.com/&lt;/a&gt;&lt;/i&gt;">
+          <outline text="Low">
+            <outline text="Can" _note="&lt;b&gt;&lt;i&gt;&lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;https://news.ycombinator.com/&lt;/a&gt;&lt;/i&gt;&lt;/b&gt;">
+              <outline text="We" _note="&lt;b&gt;&lt;i&gt;&lt;u&gt;&lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;Underlined, bold, and italic link&lt;/a&gt;&lt;/u&gt;&lt;/i&gt;&lt;/b&gt;">
+                <outline text="Go!!" _note="&lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;Another embedded link&lt;/a&gt;&lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;&#10;&#10;&lt;/a&gt;" />
+              </outline>
+            </outline>
+          </outline>
+          <outline text="Multiple links on newlines in a note" _note="&lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;https://news.ycombinator.com/&lt;/a&gt;&lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;&#10;&lt;/a&gt;&lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;https://news.ycombinator.com/&lt;/a&gt;&lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;&#10;&lt;/a&gt;&lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;https://news.ycombinator.com/&lt;/a&gt;&lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;&#10;&lt;/a&gt;" />
+          <outline text="Multiple links on newlines in a note separated by commas" _note="&lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;https://news.ycombinator.com/&lt;/a&gt;,&#10;&lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;https://news.ycombinator.com/&lt;/a&gt;,&#10;&lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;https://news.ycombinator.com/&lt;/a&gt;&#10;" />
+          <outline text="&lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;Multiple&lt;/a&gt; &lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;links&lt;/a&gt; &lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;in&lt;/a&gt; &lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;a&lt;/a&gt; &lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;headline&lt;/a&gt;" _note="&lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;Multiple&lt;/a&gt; &lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;links&lt;/a&gt; &lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;in&lt;/a&gt; &lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;a&lt;/a&gt; &lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;note&lt;/a&gt;" />
+        </outline>
+      </outline>
+    </outline>
+  </body>
+</opml>
