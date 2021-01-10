@@ -1,0 +1,35 @@
+*  Testing wfy2org
+
+**  Tested <2021-1-10> 
+
+**  */_testing_/* *all* _the_ /emphasis/
+
+***  _underline_
+
+****  *bold*
+
+**  <2021-1-31>--<2023-1-10>   
+
+**  from <2021-1-15>--<2021-1-16> 
+
+***  [[https://orgmode.org/][Fri, Jan 15, 2021 ]]
+
+**  /[[https://golang.org/pkg/regexp/][Regex info]]/
+
+***  How
+/[[https://news.ycombinator.com/]]/
+****  Low
+
+*****  Can
+*/[[https://news.ycombinator.com/]]/*
+******  We
+*/_[[https://news.ycombinator.com/][Underlined, bold, and italic link]]_/*
+*******  Go!!
+[[https://news.ycombinator.com/][Another embedded link]]
+****  Multiple links on newlines in a note separated by commas
+[[https://news.ycombinator.com/]],
+[[https://news.ycombinator.com/]],
+[[https://news.ycombinator.com/]]
+
+****  [[https://news.ycombinator.com/][Multiple]] [[https://news.ycombinator.com/][links]] [[https://news.ycombinator.com/][in]] [[https://news.ycombinator.com/][a]] [[https://news.ycombinator.com/][headline]]
+[[https://news.ycombinator.com/][Multiple]] [[https://news.ycombinator.com/][links]] [[https://news.ycombinator.com/][in]] [[https://news.ycombinator.com/][a]] [[https://news.ycombinator.com/][note]]
