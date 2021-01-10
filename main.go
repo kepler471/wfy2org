@@ -3,6 +3,7 @@
 // TODO: Add command line flags
 // TODO: Add file write
 // TODO: Convert from Org back to Workflowy OPML
+// TODO: Use time fields
 package main
 
 import (
@@ -31,13 +32,17 @@ type OPML struct {
 }
 
 type OPMLDate struct {
-	XMLName    xml.Name `xml:"time"`
-	StartYear  string   `xml:"startYear,attr"`
-	StartMonth string   `xml:"startMonth,attr"`
-	StartDay   string   `xml:"startDay,attr"`
-	EndYear    string   `xml:"endYear,attr"`
-	EndMonth   string   `xml:"endMonth,attr"`
-	EndDay     string   `xml:"endDay,attr"`
+	XMLName     xml.Name `xml:"time"`
+	StartYear   string   `xml:"startYear,attr"`
+	StartMonth  string   `xml:"startMonth,attr"`
+	StartDay    string   `xml:"startDay,attr"`
+	StartHour   string   `xml:"startHour,attr"`
+	StartMinute string   `xml:"startMinute,attr"`
+	EndYear     string   `xml:"endYear,attr"`
+	EndMonth    string   `xml:"endMonth,attr"`
+	EndDay      string   `xml:"endDay,attr"`
+	EndHour     string   `xml:"endHour,attr"`
+	EndMinute   string   `xml:"endMinute,attr"`
 }
 
 func ParseOPML(file string) OPML {
@@ -163,9 +168,16 @@ func ConvertToOrgDates(text string) string {
 			return fmt.Sprintf("###DATE %v could not be parsed: %v###", date, err)
 		}
 		if d.EndDay != "" {
-			return fmt.Sprintf("%v <%v-%v-%v>--<%v-%v-%v>", d.XMLName.Space, d.StartYear, d.StartMonth, d.StartDay, d.EndYear, d.EndMonth, d.EndDay)
+			return fmt.Sprintf(
+				"%v<%v-%v-%v>--<%v-%v-%v>", d.XMLName.Space,
+				d.StartYear, d.StartMonth, d.StartDay,
+				d.EndYear, d.EndMonth, d.EndDay,
+			)
 		}
-		return fmt.Sprintf("<%v-%v-%v>", d.StartYear, d.StartMonth, d.StartDay)
+		return fmt.Sprintf(
+			"%v<%v-%v-%v>", d.XMLName.Space,
+			d.StartYear, d.StartMonth, d.StartDay,
+		)
 	}
 	text = dates.ReplaceAllStringFunc(text, convert)
 	return text
@@ -195,7 +207,7 @@ func TreeToFile(t Outlines, depth int) {
 }
 
 func main() {
-	o := ParseOPML("latest.opml")
+	o := ParseOPML("workflowy-export.opml")
 	t := OPMLToTree(o)
 	TreeToFile(t, 1)
 }
