@@ -14,18 +14,30 @@ import (
 	"strings"
 )
 
-type OPML struct {
-	XMLName xml.Name  `xml:"opml"`
-	Head    string    `xml:"head>ownerEmail"`
-	Body    []Outline `xml:"body>outline"`
+type Outline struct {
+	XMLName  xml.Name `xml:"outline"`
+	Text     string   `xml:"text,attr"`
+	Note     string   `xml:"_note,attr"`
+	Complete string   `xml:"_complete,attr"`
+	Children Outlines `xml:"outline"`
 }
 
-type Outline struct {
-	XMLName  xml.Name  `xml:"outline"`
-	Text     string    `xml:"text,attr"`
-	Note     string    `xml:"_note,attr"`
-	Complete string    `xml:"_complete,attr"`
-	Children []Outline `xml:"outline"`
+type Outlines []Outline
+
+type OPML struct {
+	XMLName xml.Name `xml:"opml"`
+	Head    string   `xml:"head>ownerEmail"`
+	Body    Outlines `xml:"body>outline"`
+}
+
+type OPMLDate struct {
+	XMLName    xml.Name `xml:"time"`
+	StartYear  string   `xml:"startYear,attr"`
+	StartMonth string   `xml:"startMonth,attr"`
+	StartDay   string   `xml:"startDay,attr"`
+	EndYear    string   `xml:"endYear,attr"`
+	EndMonth   string   `xml:"endMonth,attr"`
+	EndDay     string   `xml:"endDay,attr"`
 }
 
 func ParseOPML(file string) OPML {
@@ -43,10 +55,14 @@ func ParseOPML(file string) OPML {
 	return org
 }
 
-func OPMLToTree(o OPML) []Outline {
+func OPMLToTree(o OPML) Outlines {
 	return o.Body
 }
 
+// ConvertToOrgEmphasis processes the emphasis styles that Workflowy supports:
+// 		<b>bold</b> => *bold*
+//		<i>italic</i> => /italic/
+//		<u>underlined</u> => _underlined_
 func ConvertToOrgEmphasis(text string) string {
 	r := strings.NewReplacer(
 		"<b>", "*",
@@ -60,7 +76,8 @@ func ConvertToOrgEmphasis(text string) string {
 }
 
 // ConvertToOrgLinks finds any hypertext links and wraps them in square brackets, as in
-// Org mode syntax, eg [[https://golang.org/][Go]].
+// Org mode syntax:
+//	<a href="https://golang.org/">Go</a> => [[https://golang.org/][Go]]
 //
 // Some links exist within the OPML document text, not in a hyperlink, just the raw link.
 // These are currently being ignored.
@@ -72,16 +89,22 @@ func ConvertToOrgEmphasis(text string) string {
 //
 // A previous attempt at this function looked to include the <a> tags within the Unmarshalling
 // of the XML document, however some links (eg. Google search page links) contained characters
-// that caused errors.
+// that caused errors. This may be something that needs to be done at the unmarshalling stage.
 //
-//	type ATag struct {
-//		XMLName xml.Name `xml:"find"`
-//		Links   []string `xml:"a"`
+//	type OPMLLink struct {
+//		XMLName xml.Name `xml:"a"`
+//		Link    string   `xml:"href,attr"`
 //}
 //
-//	links := ATag{}
-//	if err := xml.Unmarshal([]byte("<find>"+text+"</find>"), &links); err != nil {
-//		fmt.Println("Error Unmarshalling text field: ", err)
+//	splitAsXML := func(hLink string) string {
+//		l := OPMLLink{}
+//		if err := xml.Unmarshal([]byte(hLink), &l); err != nil {
+//			return fmt.Sprintf("###LINK %v could not be parsed: %v###", hLink, err)
+//		}
+//		if l.XMLName.Space == "" || l.Link == l.XMLName.Space {
+//			return fmt.Sprintf("[[%v]]", l.Link)
+//		}
+//		return fmt.Sprintf("[[%v][%v]]", l.Link, l.XMLName.Space)
 //	}
 func ConvertToOrgLinks(text string) string {
 	hyperlink := regexp.MustCompile(`<a(.*?)/a>`)
@@ -92,7 +115,7 @@ func ConvertToOrgLinks(text string) string {
 		suffix = `</a>`
 	)
 
-	split := func(hLink string) string {
+	convert := func(hLink string) string {
 		link := regexp.MustCompile(prefix + `(.+?)` + infix)
 		label := regexp.MustCompile(infix + `(.+?)` + suffix)
 		linkMatch := strings.TrimSuffix(strings.TrimPrefix(link.FindString(hLink), prefix), infix)
@@ -104,12 +127,47 @@ func ConvertToOrgLinks(text string) string {
 		return fmt.Sprintf("[[%v][%v]]", linkMatch, labelMatch)
 	}
 
-	return hyperlink.ReplaceAllStringFunc(text, split)
+	return hyperlink.ReplaceAllStringFunc(text, convert)
 
 }
 
-// TODO
+// ConvertToOrgDates applies to any datetime or datetime ranges, and converts to Org style:
+//
+// Date
+//
+//	<time startYear="2020" startMonth="11" startDay="25">Wed, Nov 25, 2020</time> =>
+//
+//			<2020-11-25 Wed>
+//
+// Date Range
+//
+//	<time startYear="2021" endYear="2021" startMonth="1" endMonth="1"...
+//		startDay="15" endDay="16">Fri, Jan 15, 2021 to Sat, Jan 16, 2021</time>  =>
+//
+//			<2021-01-15 Fri>--<2021-01-16 Sat>
+//
+// Org also has inactive timestamps which do not trigger an associated entry to show up in
+// the agenda:
+//
+//			[2020-11-25 Wed]
+//
+// In Workflowy, dates require a specified day, or a day with a time. For example, a date
+// cannot be created for December.
+// As with links, dates are contained within the text field of the Workflowy OPML
 func ConvertToOrgDates(text string) string {
+	dates := regexp.MustCompile(`<time(.*?)/time>`)
+
+	convert := func(date string) string {
+		d := OPMLDate{}
+		if err := xml.Unmarshal([]byte(date), &d); err != nil {
+			return fmt.Sprintf("###DATE %v could not be parsed: %v###", date, err)
+		}
+		if d.EndDay != "" {
+			return fmt.Sprintf("%v <%v-%v-%v>--<%v-%v-%v>", d.XMLName.Space, d.StartYear, d.StartMonth, d.StartDay, d.EndYear, d.EndMonth, d.EndDay)
+		}
+		return fmt.Sprintf("<%v-%v-%v>", d.StartYear, d.StartMonth, d.StartDay)
+	}
+	text = dates.ReplaceAllStringFunc(text, convert)
 	return text
 }
 
@@ -120,7 +178,7 @@ func OrgMarkup(text string) string {
 // TreeToFile prints the output of the conversion from OPML to Org.
 // A blank line is created between headlines, and notes are written here.
 // Any headlines which are complete are prepended with a "DONE" Org tag.
-func TreeToFile(t []Outline, depth int) {
+func TreeToFile(t Outlines, depth int) {
 	if len(t) == 0 {
 		return
 	}
@@ -137,7 +195,7 @@ func TreeToFile(t []Outline, depth int) {
 }
 
 func main() {
-	o := ParseOPML("workflowy-export.opml")
+	o := ParseOPML("latest.opml")
 	t := OPMLToTree(o)
 	TreeToFile(t, 1)
 }
