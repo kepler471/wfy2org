@@ -1,9 +1,8 @@
-// wfy2org converts OPML structured document to an Emacs Org file.
-// Currently the Org file output is just printed
+// wfy2org converts OPML structured document to an Emacs Org file. Currently the
+// Org file output is just printed.
 // TODO: Add command line flags
 // TODO: Add file write
-// TODO: Convert from Org back to Workflowy OPML
-// TODO: Use time fields
+// TODO: Convert from Org back to Workflowy OPML TODO: Use time fields
 package main
 
 import (
@@ -80,21 +79,28 @@ func ConvertToOrgEmphasis(text string) string {
 	return r.Replace(text)
 }
 
-// ConvertToOrgLinks finds any hypertext links and wraps them in square brackets, as in
-// Org mode syntax:
+// ConvertToOrgLinks finds any hypertext links and wraps them in square brackets,
+// as in Org mode syntax:
 //	<a href="https://golang.org/">Go</a> => [[https://golang.org/][Go]]
 //
-// Some links exist within the OPML document text, not in a hyperlink, just the raw link.
-// These are currently being ignored.
+// Some links exist within the OPML document text, not in a hyperlink, just the
+// raw link. These are currently being ignored as Org mode still highlights them
+// as links.
 //
-// There is another edge case where a character has been typed, and has been included in the
-// URL label/description in the hyperlink, which then leads to that character also being captured
-// by the Org mode style. It is also possible this is causing another issue on Workflowy's end
-// where the exported OPML shows a duplicate for the hyperlink with the previous edge case.
+// Some notes in Workflowy where links are placed on multiple lines cause issues.
+// The problem seems to be that Workflowy creates a duplicate hyperlink at the
+// line breaks.
 //
-// A previous attempt at this function looked to include the <a> tags within the Unmarshalling
-// of the XML document, however some links (eg. Google search page links) contained characters
-// that caused errors. This may be something that needs to be done at the unmarshalling stage.
+// There is another edge case where a character has been typed, and has been
+// included in the URL label/description in the hyperlink, which then leads to
+// that character also being captured by the Org mode style (such as a comma,
+// added after a link, and before a new line, being included in the link
+// description/label).
+//
+// A previous attempt at this function looked to include the <a> tags within the
+// Unmarshalling of the XML document, however some links (eg. Google search page
+// links) contained characters that caused errors. This may be something that
+// needs to be done at the unmarshalling stage.
 //
 //	type OPMLLink struct {
 //		XMLName xml.Name `xml:"a"`
@@ -136,7 +142,8 @@ func ConvertToOrgLinks(text string) string {
 
 }
 
-// ConvertToOrgDates applies to any datetime or datetime ranges, and converts to Org style:
+// ConvertToOrgDates applies to any datetime or datetime ranges, and converts to
+// Org style:
 //
 // Date
 //
@@ -151,14 +158,14 @@ func ConvertToOrgLinks(text string) string {
 //
 //			<2021-01-15 Fri>--<2021-01-16 Sat>
 //
-// Org also has inactive timestamps which do not trigger an associated entry to show up in
-// the agenda:
+// Org also has inactive timestamps which do not trigger an associated entry to
+// show up in the agenda:
 //
 //			[2020-11-25 Wed]
 //
-// In Workflowy, dates require a specified day, or a day with a time. For example, a date
-// cannot be created for December.
-// As with links, dates are contained within the text field of the Workflowy OPML
+// In Workflowy, dates require a specified day, or a day with a time. For
+// example, a date cannot be created for December. As with links, dates are
+// contained within the text field of the Workflowy OPML
 func ConvertToOrgDates(text string) string {
 	dates := regexp.MustCompile(`<time(.*?)/time>`)
 
@@ -187,9 +194,9 @@ func OrgMarkup(text string) string {
 	return ConvertToOrgDates(ConvertToOrgEmphasis(ConvertToOrgLinks(text)))
 }
 
-// TreeToFile prints the output of the conversion from OPML to Org.
-// A blank line is created between headlines, and notes are written here.
-// Any headlines which are complete are prepended with a "DONE" Org tag.
+// TreeToFile prints the output of the conversion from OPML to Org. A blank line
+// is created between headlines, and notes are written here. Any headlines which
+// are complete are prepended with a "DONE" Org tag.
 func TreeToFile(t Outlines, depth int) {
 	if len(t) == 0 {
 		return
