@@ -2,7 +2,7 @@
 <opml version="2.0">
   <head>
     <ownerEmail>
-      steliosdg@gmail.com
+      JohnDoe@email.com
     </ownerEmail>
   </head>
   <body>
@@ -22,7 +22,7 @@
           <outline text="Low">
             <outline text="Can" _note="&lt;b&gt;&lt;i&gt;&lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;https://news.ycombinator.com/&lt;/a&gt;&lt;/i&gt;&lt;/b&gt;">
               <outline text="We" _note="&lt;b&gt;&lt;i&gt;&lt;u&gt;&lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;Underlined, bold, and italic link&lt;/a&gt;&lt;/u&gt;&lt;/i&gt;&lt;/b&gt;">
-                <outline text="Go!!" _note="&lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;Another embedded link&lt;/a&gt;&lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;&#10;&#10;&lt;/a&gt;" />
+                <outline text="Go!!" _note="&lt;a href=&quot;https://news.ycombinator.com/&quot;&gt;Another embedded link&lt;/a&gt;" />
               </outline>
             </outline>
           </outline>
